@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  NotFoundException,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -21,34 +22,52 @@ export class PostsController {
 
   @Post()
   @ApiCreatedResponse({ type: PostEntity })
-  create(@Body() createPostDto: CreatePostDto) {
-    return this.postsService.create(createPostDto);
+  async create(@Body() createPostDto: CreatePostDto) {
+    return await this.postsService.create(createPostDto);
   }
 
   @Get()
   @ApiOkResponse({ type: PostEntity })
-  findAll() {
-    return this.postsService.findAll();
+  async findAll() {
+    return await this.postsService.findAll();
   }
 
   @Get(':id')
   @ApiOkResponse({ type: PostEntity })
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.postsService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const post = await this.postsService.findOne(id);
+
+    if (!post) {
+      throw new NotFoundException(`Post with ${id} does not exist.`);
+    }
+
+    return post;
   }
 
   @Patch(':id')
   @ApiOkResponse({ type: PostEntity })
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePostDto: UpdatePostDto,
   ) {
-    return this.postsService.update(id, updatePostDto);
+    const post = await this.postsService.findOne(id);
+
+    if (!post) {
+      throw new NotFoundException(`Post with ${id} does not exist.`);
+    }
+
+    return await this.postsService.update(id, updatePostDto);
   }
 
   @Delete(':id')
   @ApiOkResponse({ type: PostEntity })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.postsService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    const post = await this.postsService.findOne(id);
+
+    if (!post) {
+      throw new NotFoundException(`Post with ${id} does not exist.`);
+    }
+
+    return await this.postsService.remove(id);
   }
 }
