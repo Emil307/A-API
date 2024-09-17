@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { UserEntity } from 'src/users/entities/user.entity';
 
 export class PostEntity {
   @ApiProperty()
@@ -12,4 +13,15 @@ export class PostEntity {
 
   @ApiProperty()
   ownerId: number;
+
+  @ApiProperty({ type: UserEntity })
+  owner: UserEntity;
+
+  constructor({ owner, ...data }: Partial<PostEntity>) {
+    Object.assign(this, data);
+
+    if (owner) {
+      this.owner = new UserEntity(owner);
+    }
+  }
 }

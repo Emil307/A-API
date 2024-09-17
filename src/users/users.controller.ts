@@ -30,7 +30,7 @@ export class UsersController {
   @Post()
   @ApiCreatedResponse({ type: UserEntity })
   async create(@Body() createUserDto: CreateUserDto) {
-    return await this.usersService.create(createUserDto);
+    return new UserEntity(await this.usersService.create(createUserDto));
   }
 
   @Get()
@@ -38,7 +38,8 @@ export class UsersController {
   @ApiBearerAuth()
   @ApiOkResponse({ type: UserEntity })
   async findAll() {
-    return await this.usersService.findAll();
+    const users = await this.usersService.findAll();
+    return users.map((user) => new UserEntity(user));
   }
 
   @Get(':id')
@@ -46,7 +47,7 @@ export class UsersController {
   @ApiBearerAuth()
   @ApiOkResponse({ type: UserEntity })
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    const user = await this.usersService.findOne(id);
+    const user = new UserEntity(await this.usersService.findOne(id));
 
     if (!user) {
       throw new NotFoundException(`User with ${id} does not exist.`);
@@ -62,13 +63,13 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    const user = await this.usersService.findOne(id);
+    const user = new UserEntity(await this.usersService.findOne(id));
 
     if (!user) {
       throw new NotFoundException(`User with ${id} does not exist.`);
     }
 
-    return await this.usersService.update(id, updateUserDto);
+    return new UserEntity(await this.usersService.update(id, updateUserDto));
   }
 
   @Delete(':id')
@@ -76,12 +77,12 @@ export class UsersController {
   @ApiBearerAuth()
   @ApiOkResponse({ type: UserEntity })
   async remove(@Param('id', ParseIntPipe) id: number) {
-    const user = await this.usersService.findOne(id);
+    const user = new UserEntity(await this.usersService.findOne(id));
 
     if (!user) {
       throw new NotFoundException(`User with ${id} does not exist.`);
     }
 
-    return await this.usersService.remove(id);
+    return new UserEntity(await this.usersService.remove(id));
   }
 }
