@@ -9,6 +9,9 @@ import {
   ParseIntPipe,
   NotFoundException,
   UseGuards,
+  Req,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -31,8 +34,8 @@ export class PostsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiCreatedResponse({ type: PostEntity })
-  async create(@Body() createPostDto: CreatePostDto) {
-    return await this.postsService.create(createPostDto);
+  async create(@Body() createPostDto: CreatePostDto, @Req() request) {
+    return await this.postsService.create(createPostDto, request.user.id);
   }
 
   @Get()
@@ -64,11 +67,16 @@ export class PostsController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePostDto: UpdatePostDto,
+    @Req() request,
   ) {
     const post = await this.postsService.findOne(id);
 
     if (!post) {
       throw new NotFoundException(`Post with ${id} does not exist.`);
+    }
+
+    if (request.user.id !== post.ownerId) {
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
 
     return await this.postsService.update(id, updatePostDto);
@@ -78,11 +86,15 @@ export class PostsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOkResponse({ type: PostEntity })
-  async remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(@Param('id', ParseIntPipe) id: number, @Req() request) {
     const post = await this.postsService.findOne(id);
 
     if (!post) {
       throw new NotFoundException(`Post with ${id} does not exist.`);
+    }
+
+    if (request.user.id !== post.ownerId) {
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
 
     return await this.postsService.remove(id);

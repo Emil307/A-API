@@ -9,4 +9,7 @@ export class PostEntity {
 
   @ApiProperty()
   createdAt: Date;
+
+  @ApiProperty()
+  ownerId: number;
 }

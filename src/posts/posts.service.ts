@@ -7,8 +7,13 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class PostsService {
   constructor(private prisma: PrismaService) {}
 
-  create(createPostDto: CreatePostDto) {
-    return this.prisma.post.create({ data: createPostDto });
+  create(createPostDto: CreatePostDto, ownerId: number) {
+    return this.prisma.post.create({
+      data: {
+        body: createPostDto.body,
+        ownerId: ownerId,
+      },
+    });
   }
 
   findAll() {
