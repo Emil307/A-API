@@ -8,12 +8,19 @@ import {
   Delete,
   ParseIntPipe,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { PostEntity } from './entities/post.entity';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('posts')
 @ApiTags('posts')
@@ -21,18 +28,24 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiCreatedResponse({ type: PostEntity })
   async create(@Body() createPostDto: CreatePostDto) {
     return await this.postsService.create(createPostDto);
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: PostEntity })
   async findAll() {
     return await this.postsService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: PostEntity })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const post = await this.postsService.findOne(id);
@@ -45,6 +58,8 @@ export class PostsController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: PostEntity })
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -60,6 +75,8 @@ export class PostsController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: PostEntity })
   async remove(@Param('id', ParseIntPipe) id: number) {
     const post = await this.postsService.findOne(id);
