@@ -17,11 +17,14 @@ export class PostsService {
   }
 
   findAll() {
-    return this.prisma.post.findMany();
+    return this.prisma.post.findMany({ include: { owner: true } });
   }
 
   findOne(id: number) {
-    return this.prisma.post.findFirst({ where: { id: id } });
+    return this.prisma.post.findFirst({
+      where: { id: id },
+      include: { owner: true },
+    });
   }
 
   update(id: number, updatePostDto: UpdatePostDto) {
