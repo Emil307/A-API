@@ -13,6 +13,7 @@ services:
     command: -p 5555
 
   app:
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile
