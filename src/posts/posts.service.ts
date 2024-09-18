@@ -13,6 +13,7 @@ export class PostsService {
         body: createPostDto.body,
         ownerId: ownerId,
       },
+      include: { owner: true },
     });
   }
 
