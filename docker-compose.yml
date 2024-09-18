@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    # environment:
+    #   - POSTGRES_PASSWORD=postgres
+    env_file: ./.env
+    container_name: postgres
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - '5555:5555'
+    command: -p 5555
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nest-docker-postgres
+    # environment:
+    #   - PORT=${PORT}
+    env_file: ./.env
+    ports:
+      - '8888:8888'
+    command: >
+      /bin/sh -c "npx prisma migrate deploy && pnpm start:dev"
+    depends_on:
+      - db
+    volumes:
+      - ./prisma:/app/prisma
+      - ./src:/app/src
