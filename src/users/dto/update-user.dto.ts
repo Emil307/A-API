@@ -6,6 +6,9 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   name: string;
 
   @ApiProperty()
+  tag: string;
+
+  @ApiProperty()
   email: string;
 
   @ApiProperty()

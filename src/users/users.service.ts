@@ -11,13 +11,24 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
-    const user = await this.prisma.user.findFirst({
+    const userByEmail = await this.prisma.user.findFirst({
       where: { email: createUserDto.email },
     });
 
-    if (user) {
+    if (userByEmail) {
       throw new HttpException(
         `User with email ${createUserDto.email} already exists`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const userByTag = await this.prisma.user.findFirst({
+      where: { tag: createUserDto.tag },
+    });
+
+    if (userByTag) {
+      throw new HttpException(
+        `User with tag ${createUserDto.tag} already exists`,
         HttpStatus.BAD_REQUEST,
       );
     }
