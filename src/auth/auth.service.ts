@@ -28,8 +28,11 @@ export class AuthService {
       throw new UnauthorizedException('Invalid password');
     }
 
-    return {
-      accessToken: this.jwtService.sign({ userId: user.id }),
-    };
+    return new AuthEntity(
+      await {
+        accessToken: this.jwtService.sign({ userId: user.id }),
+        user: user,
+      },
+    );
   }
 }
