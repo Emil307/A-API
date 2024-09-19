@@ -15,20 +15,20 @@ export class PostsService {
         predecessorId: createPostDto?.predecessorId,
         ownerId: ownerId,
       },
-      include: { owner: true },
+      include: { owner: true, predecessor: true },
     });
   }
 
   findAll() {
     return this.prisma.post.findMany({
-      include: { owner: true, successor: true },
+      include: { owner: true, predecessor: true },
     });
   }
 
   findOne(id: number) {
     return this.prisma.post.findFirst({
       where: { id: id },
-      include: { owner: true, successor: true },
+      include: { owner: true, predecessor: true },
     });
   }
 
