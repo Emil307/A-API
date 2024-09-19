@@ -8,23 +8,27 @@ export class PostsService {
   constructor(private prisma: PrismaService) {}
 
   create(createPostDto: CreatePostDto, ownerId: number) {
+    console.log(createPostDto?.predecessorId);
     return this.prisma.post.create({
       data: {
         body: createPostDto.body,
+        predecessorId: createPostDto?.predecessorId,
         ownerId: ownerId,
       },
-      include: { owner: true },
+      include: { owner: true, predecessor: true },
     });
   }
 
   findAll() {
-    return this.prisma.post.findMany({ include: { owner: true } });
+    return this.prisma.post.findMany({
+      include: { owner: true, predecessor: true },
+    });
   }
 
   findOne(id: number) {
     return this.prisma.post.findFirst({
       where: { id: id },
-      include: { owner: true },
+      include: { owner: true, predecessor: true },
     });
   }
 

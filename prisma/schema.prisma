@@ -30,4 +30,9 @@ model Post {
   createdAt DateTime @default(now())
   owner User @relation(fields: [ownerId], references: [id])
   ownerId Int
+
+  predecessorId Int? @unique
+  predecessor Post? @relation("Replyes", fields: [predecessorId], references: [id])
+
+  successor Post? @relation("Replyes")
 }

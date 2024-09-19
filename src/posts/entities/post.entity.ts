@@ -14,6 +14,9 @@ export class PostEntity {
   @ApiProperty()
   ownerId: number;
 
+  @ApiProperty({ required: false })
+  predecessorId?: number;
+
   @ApiProperty({ type: UserEntity })
   owner: UserEntity;
 
