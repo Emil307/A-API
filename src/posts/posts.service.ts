@@ -19,8 +19,10 @@ export class PostsService {
     });
   }
 
-  findAll() {
+  findAll(offset?: number, limit?: number) {
     return this.prisma.post.findMany({
+      skip: offset,
+      take: limit,
       include: { owner: true, predecessor: true },
     });
   }

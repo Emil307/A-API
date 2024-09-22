@@ -12,6 +12,7 @@ import {
   Req,
   HttpException,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -20,10 +21,13 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { PostEntity } from './entities/post.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { PaginationParamsDto } from './dto/paginationParams.dto';
 
 @Controller('posts')
 @ApiTags('posts')
@@ -43,9 +47,11 @@ export class PostsController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @ApiQuery({ name: 'offset', type: 'number', required: false })
+  @ApiQuery({ name: 'limit', type: 'number', required: false })
   @ApiOkResponse({ type: PostEntity })
-  async findAll() {
-    const posts = await this.postsService.findAll();
+  async findAll(@Query() { offset, limit }: PaginationParamsDto) {
+    const posts = await this.postsService.findAll(offset, limit);
     return posts.map((post) => new PostEntity(post));
   }
 
