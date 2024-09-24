@@ -18,11 +18,11 @@ export class PostsService {
     });
   }
 
-  async findAll(offset?: number, limit?: number, search?: string) {
+  async findAll(offset?: number, limit?: number, body?: string) {
     const posts = await this.prisma.post.findMany({
       where: {
         body: {
-          contains: search,
+          contains: body,
           mode: 'insensitive',
         },
       },

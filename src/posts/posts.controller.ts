@@ -56,9 +56,9 @@ export class PostsController {
   @ApiOkResponse({ type: PostEntity })
   async findAll(
     @Query() { offset, limit }: PaginationParamsDto,
-    @Query() { search }: SearchParamsDto,
+    @Query() { body }: SearchParamsDto,
   ) {
-    const posts = await this.postsService.findAll(offset, limit, search);
+    const posts = await this.postsService.findAll(offset, limit, body);
     return posts.map((post) => new PostEntity(post));
   }
 

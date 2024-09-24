@@ -4,5 +4,5 @@ export class SearchParamsDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  search?: string | null;
+  body?: string | null;
 }
