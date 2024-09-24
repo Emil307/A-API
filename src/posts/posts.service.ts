@@ -8,7 +8,6 @@ export class PostsService {
   constructor(private prisma: PrismaService) {}
 
   create(createPostDto: CreatePostDto, ownerId: number) {
-    console.log(createPostDto?.predecessorId);
     return this.prisma.post.create({
       data: {
         body: createPostDto.body,
@@ -19,12 +18,14 @@ export class PostsService {
     });
   }
 
-  findAll(offset?: number, limit?: number) {
-    return this.prisma.post.findMany({
+  async findAll(offset?: number, limit?: number) {
+    const posts = await this.prisma.post.findMany({
       skip: offset,
       take: limit,
       include: { owner: true, predecessor: true },
     });
+
+    return posts;
   }
 
   findOne(id: number) {

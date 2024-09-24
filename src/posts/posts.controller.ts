@@ -13,6 +13,7 @@ import {
   HttpException,
   HttpStatus,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -27,7 +28,9 @@ import {
 import { PostEntity } from './entities/post.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { PaginationParamsDto } from './dto/paginationParams.dto';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
+// @UseInterceptors(CacheInterceptor)
 @Controller('posts')
 @ApiTags('posts')
 export class PostsController {
