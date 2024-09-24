@@ -18,8 +18,13 @@ export class PostsService {
     });
   }
 
-  async findAll(offset?: number, limit?: number) {
+  async findAll(offset?: number, limit?: number, search?: string) {
     const posts = await this.prisma.post.findMany({
+      where: {
+        body: {
+          search: search.split(' ').join(' & '),
+        },
+      },
       skip: offset,
       take: limit,
       include: { owner: true, predecessor: true },

@@ -13,7 +13,7 @@ import {
   HttpException,
   HttpStatus,
   Query,
-  UseInterceptors,
+  // UseInterceptors,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -28,7 +28,8 @@ import {
 import { PostEntity } from './entities/post.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { PaginationParamsDto } from './dto/paginationParams.dto';
-import { CacheInterceptor } from '@nestjs/cache-manager';
+import { SearchParamsDto } from './dto/searchParams.dto';
+// import { CacheInterceptor } from '@nestjs/cache-manager';
 
 // @UseInterceptors(CacheInterceptor)
 @Controller('posts')
@@ -51,9 +52,13 @@ export class PostsController {
   @ApiBearerAuth()
   @ApiQuery({ name: 'offset', type: 'number', required: false })
   @ApiQuery({ name: 'limit', type: 'number', required: false })
+  @ApiQuery({ name: 'search', type: 'string', required: false })
   @ApiOkResponse({ type: PostEntity })
-  async findAll(@Query() { offset, limit }: PaginationParamsDto) {
-    const posts = await this.postsService.findAll(offset, limit);
+  async findAll(
+    @Query() { offset, limit }: PaginationParamsDto,
+    @Query() { search }: SearchParamsDto,
+  ) {
+    const posts = await this.postsService.findAll(offset, limit, search);
     return posts.map((post) => new PostEntity(post));
   }
 
