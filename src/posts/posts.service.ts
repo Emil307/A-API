@@ -22,7 +22,8 @@ export class PostsService {
     const posts = await this.prisma.post.findMany({
       where: {
         body: {
-          search: search?.split(' ').join(' & '),
+          contains: search,
+          mode: 'insensitive',
         },
       },
       skip: offset,
